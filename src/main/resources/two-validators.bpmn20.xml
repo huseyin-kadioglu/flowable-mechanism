@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath"
+             targetNamespace="http://www.flowable.org/processdef">
+    <process id="two-validators" name="two-validators" isExecutable="true">
+
+            <startEvent id="startEvent"/>
+            <sequenceFlow sourceRef="startEvent" targetRef="validator1"/>
+            <userTask id="validator1" name="First Validator"/>
+            <sequenceFlow sourceRef="validator1" targetRef="decision1"/>
+            <exclusiveGateway id="decision1"/>
+            <sequenceFlow sourceRef="decision1" targetRef="validator2">
+                <conditionExpression xsi:type="tFormalExpression">
+                    <![CDATA[${first_approval}]]>
+                </conditionExpression>
+            </sequenceFlow>
+            <sequenceFlow sourceRef="decision1" targetRef="rejection1">
+                <conditionExpression xsi:type="tFormalExpression">
+                    <![CDATA[${!first_approval}]]>
+                </conditionExpression>
+            </sequenceFlow>
+            <serviceTask id="rejection1" name="First approval is rejected. Calling the rejection service"
+                         flowable:class="com.linktera.demo.service.Reject"/>
+            <sequenceFlow sourceRef="rejection1" targetRef="endEvent"/>
+
+            <userTask id="validator2" name="Second Validator"/>
+            <sequenceFlow sourceRef="validator2" targetRef="decision2"/>
+            <exclusiveGateway id="decision2"/>
+            <sequenceFlow sourceRef="decision2" targetRef="approve">
+                <conditionExpression xsi:type="tFormalExpression">
+                    <![CDATA[${second_approval}]]>
+                </conditionExpression>
+            </sequenceFlow>
+            <sequenceFlow sourceRef="decision2" targetRef="rejection2">
+                <conditionExpression xsi:type="tFormalExpression">
+                    <![CDATA[${!second_approval}]]>
+                </conditionExpression>
+            </sequenceFlow>
+            <serviceTask id="rejection2" name="Second approval is rejected. Calling the rejection service"
+                         flowable:class="com.linktera.demo.service.Reject"/>
+            <sequenceFlow sourceRef="rejection2" targetRef="endEvent"/>
+            <endEvent id="endEvent"/>
+            <serviceTask id="approve" name="Task is approved! Calling the approved service!"
+                         flowable:class="com.linktera.demo.service.Approve"/>
+            <sequenceFlow sourceRef="approve" targetRef="endEvent"/>
+    </process>
+</definitions>
