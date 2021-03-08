@@ -1,4 +1,4 @@
-package com.linktera.demo.service;
+package com.linktera.demo.model;
 
 
 import lombok.AllArgsConstructor;

@@ -7,6 +7,6 @@ public class Reject implements JavaDelegate {
 
     public void execute(DelegateExecution execution) {
         System.out.println("REJECTED! "
-                + execution.getVariable("employee"));
+                + execution.getVariable("payload"));
     }
 }
